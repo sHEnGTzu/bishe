@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+
+//启动失败先注释此程序，启动完关闭后再取消注释并启动
 @RestController
 public class OllamaController {
 
@@ -36,15 +38,18 @@ public class OllamaController {
     }
 
     /**
-     * http://localhost:8080/ollama/chat/v3?msg=你认为老牛同学的文章如何？
+     * http://localhost:8080/ollama/chat/v3?msg=三角形的内角和是多少度
      */
     @GetMapping("/ollama/chat/v3")
     public Object ollamaChatV3(@RequestParam String msg) {
         Prompt prompt = new Prompt(
                 msg,
+//                OllamaOptions.create()
+//                        .withModel("deepseek-r1:1.5b")
+//                        .withTemperature(0.4F));
                 OllamaOptions.create()
-                        .withModel("qwen:0.5b")
-                        .withTemperature(0.4F));
+                        .withModel("deepseek-r1:1.5b")
+                        .withTemperature(0F));
         ChatResponse chatResponse = ollamaChatClient.call(prompt);
         return chatResponse.getResult().getOutput().getContent();
     }
