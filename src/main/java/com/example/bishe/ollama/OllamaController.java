@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 //启动失败先注释此程序，启动完关闭后再取消注释并启动
 @RestController
-public class OllamaController {
+public class OllamaController {           //依赖自动注入的ai提问接口
 
     @Autowired
     @Qualifier("ollamaChatClient")
@@ -53,4 +53,6 @@ public class OllamaController {
         ChatResponse chatResponse = ollamaChatClient.call(prompt);
         return chatResponse.getResult().getOutput().getContent();
     }
+
+
 }
