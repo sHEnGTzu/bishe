@@ -27,7 +27,7 @@ public interface NodeRepository extends Neo4jRepository<entity,Long> {
     List<Object> findRelationsByName(String name);
 
 
-    //根据id添加关系
+    //根据id添加关系:
     @Query(value = "MATCH (a), (b)\n" +
             "WHERE id(a) = $id1 AND id(b) = $id2\n" +
             "CREATE (a)-[r:relation {relation: $relation}]->(b)")

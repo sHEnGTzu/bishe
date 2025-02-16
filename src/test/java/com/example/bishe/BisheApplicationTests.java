@@ -71,10 +71,10 @@ class BisheApplicationTests {
 //        nodeService.createRelationBetweenNodes("小红","小明","邻居");
 //        nodeService.createRelationBetweenNodes("小明","小张","邻居");
 //
-//        System.out.println(nodeService.findNodeByName("小红"));
-//        System.out.println(nodeService.findNodeByName("小明"));
-//        System.out.println(nodeService.findNodeByName("小张"));
-//        System.out.println(nodeService.findNodeByName("小李"));
+        System.out.println(nodeService.findNodeByName("小红"));
+        System.out.println(nodeService.findNodeByName("小明"));
+        System.out.println(nodeService.findNodeByName("小张"));
+        System.out.println(nodeService.findNodeByName("小李"));
 
     }
 
