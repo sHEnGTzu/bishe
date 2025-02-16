@@ -12,13 +12,14 @@ import java.util.regex.Pattern;
 
 public class ReadPDF {
     public static void main(String[] args) {
-        List<String> temp = deal("C:\\Users\\24204\\Desktop\\paper\\1.pdf");
-        if (temp != null) {
-            for (String sentence : temp) {
-                System.out.println(sentence);
-                System.out.println();
-            }
-        }
+        //测试
+//        List<String> temp = deal("C:\\Users\\24204\\Desktop\\paper\\1.pdf");
+//        if (temp != null) {
+//            for (String sentence : temp) {
+//                System.out.println(sentence);
+//                System.out.println();
+//            }
+//        }
     }
 
     public static List<String> deal(String location) {
