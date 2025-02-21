@@ -28,8 +28,11 @@ public interface NodeRepository extends Neo4jRepository<entity,Long> {
 
 
     //根据id添加关系:
-    @Query(value = "MATCH (a), (b)\n" +
-            "WHERE id(a) = $id1 AND id(b) = $id2\n" +
+    @Query(value = "MATCH (a)\n" +
+            "WHERE id(a) = $id1\n" +
+            "WITH a\n" +
+            "MATCH (b)\n" +
+            "WHERE id(b) = $id2\n" +
             "CREATE (a)-[r:relation {relation: $relation}]->(b)")
     void addRelation(Long id1,String relation,Long id2);
 

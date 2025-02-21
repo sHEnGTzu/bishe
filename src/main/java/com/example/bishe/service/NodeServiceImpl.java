@@ -65,7 +65,7 @@ public class NodeServiceImpl implements NodeService{
                 Map<String, Object> map = mapValue.asMap();
                 InternalNode entity = (InternalNode) map.get("entity");
                 String _name = String.valueOf(entity.get("name"));
-                _name = _name.substring(1,name.length()+1);
+
 
                 Long id = (Long) map.get("id");
                 entity target = NodeRepository.findFirstByName(_name);

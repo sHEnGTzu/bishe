@@ -23,6 +23,7 @@ public class ReadPDF {
     }
 
     public static List<String> deal(String location) {
+        System.out.println("文献pdf预处理中...");
         try {
             File file = new File(location);
             PDDocument document = PDDocument.load(file);
@@ -38,6 +39,8 @@ public class ReadPDF {
             List<String> sentences = splitTextIntoSentences(text);
 
             document.close();
+
+            System.out.println("处理完成");
 
             return sentences;
         } catch (IOException e) {

@@ -1,17 +1,14 @@
 package com.example.bishe;
 
 import com.example.bishe.dao.NodeRepository;
-import com.example.bishe.entity.entity;
-import com.example.bishe.entity.relation;
+import com.example.bishe.entity_reco.Entity_Relation_reco;
+import com.example.bishe.ollama.aiInter;
 import com.example.bishe.service.NodeService;
 import org.junit.jupiter.api.Test;
-import org.neo4j.driver.internal.InternalNode;
-import org.neo4j.driver.internal.value.MapValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
-import java.util.Map;
+
 
 @SpringBootTest
 class BisheApplicationTests {
@@ -71,10 +68,15 @@ class BisheApplicationTests {
 //        nodeService.createRelationBetweenNodes("小红","小明","邻居");
 //        nodeService.createRelationBetweenNodes("小明","小张","邻居");
 //
-        System.out.println(nodeService.findNodeByName("小红"));
-        System.out.println(nodeService.findNodeByName("小明"));
-        System.out.println(nodeService.findNodeByName("小张"));
-        System.out.println(nodeService.findNodeByName("小李"));
+//        System.out.println(nodeService.findNodeByName("小红"));
+//        System.out.println(nodeService.findNodeByName("小明"));
+//        System.out.println(nodeService.findNodeByName("小张"));
+//        System.out.println(nodeService.findNodeByName("小李"));
+
+
+        Entity_Relation_reco entity_Relation_reco = new Entity_Relation_reco("C:\\Users\\24204\\Desktop\\paper\\1.pdf","deepseek-r1:1.5b");
+        System.out.println(entity_Relation_reco.sentences.size());
+        entity_Relation_reco.getText(entity_Relation_reco.sentences.get(1),1);
 
     }
 

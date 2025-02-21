@@ -19,13 +19,15 @@ public class aiInter {
         this.ollamaChatClient = new OllamaChatClient(ollamaApi);
     }
 
-    public String tiwen(String msg){
+    public String tiwen(String msg,float temperature,String model){
+        System.out.println("提问中...");
         Prompt prompt = new Prompt(
                 msg,
                 OllamaOptions.create()
-                        .withModel("deepseek-r1:1.5b")
-                        .withTemperature(0.0F));
+                        .withModel(model)
+                        .withTemperature(temperature));
         ChatResponse chatResponse = ollamaChatClient.call(prompt);
+        System.out.println("模型回答完毕");
         return chatResponse.getResult().getOutput().getContent();
     }
 

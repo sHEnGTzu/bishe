@@ -100,13 +100,13 @@
             <version>5.2.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.aspose</groupId>
-            <artifactId>aspose-words</artifactId>
-            <!-- 可根据需要替换为其他版本 -->
-            <version>24.12</version>
-            <classifier>jdk17</classifier>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.aspose</groupId>-->
+<!--            <artifactId>aspose-words</artifactId>-->
+<!--            &lt;!&ndash; 可根据需要替换为其他版本 &ndash;&gt;-->
+<!--            <version>24.12</version>-->
+<!--            <classifier>jdk17</classifier>-->
+<!--        </dependency>-->
 
         <!-- Jenkins Core -->
         <dependency>
