@@ -76,7 +76,7 @@ class BisheApplicationTests {
 
         Entity_Relation_reco entity_Relation_reco = new Entity_Relation_reco("C:\\Users\\24204\\Desktop\\paper\\1.pdf","deepseek-r1:1.5b");
         System.out.println(entity_Relation_reco.sentences.size());
-        entity_Relation_reco.getText(entity_Relation_reco.sentences.get(1),1);
+        entity_Relation_reco.main();
 
     }
 

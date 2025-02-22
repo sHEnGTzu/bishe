@@ -82,6 +82,14 @@ public class Entity_Relation_reco {
         getSentences();
     }
 
+    public void main(){
+        int n = sentences.size();
+        for (int i=0;i<n;i++){
+            getText(sentences.get(i),i);
+        }
+        System.out.println("文献创建Neo4J知识图谱完成");
+    }
+
     //读取pdf内容并预处理
     private void getSentences(){
         this.sentences = ReadPDF.deal(location);
@@ -92,7 +100,7 @@ public class Entity_Relation_reco {
     //通过AI得到文本回答
     public void getText(String sentence,int i){
         System.out.println("提取第"+i+"句话中实体："+sentence);
-        String text = _aiInter.tiwen(question1_1+sentence+question1_2,0.0F,model);
+        String text = _aiInter.tiwen(question1_1+sentence+question1_2,0.4F,model);
         getEntity(text,sentence);
     }
 
@@ -120,12 +128,22 @@ public class Entity_Relation_reco {
 
 
     //向ai提问获取实体之间关系
-    //两个问题：1.有时模型把我给的例子直接当答案给我了；2.有时明明提取了关系但无法通过循环创建neo4j关系
     public void getRelation(String entities,String sentence){
-        String text = _aiInter.tiwen(question2_1+sentence+"\n给定实体："+entities+"\n"+question2_2,0.0F,model);
-        String regex = "结果是\\[(.*?)\\]";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(text);
+        Pattern pattern;
+        Matcher matcher;
+        while(true) {
+            try {
+                String text = _aiInter.tiwen(question2_1 + sentence + "\n给定实体：" + entities + "\n" + question2_2, 0.3F, model);
+                String regex = "结果是\\[(.*?)\\]";
+                pattern = Pattern.compile(regex);
+                matcher = pattern.matcher(text);
+                break;
+            }
+        catch (NullPointerException e){
+                System.out.println("模型回答格式错误，重新提问");
+            }
+        }
+
 
         List<String> relations = new ArrayList<>();
         if (matcher.find()) {
@@ -143,8 +161,8 @@ public class Entity_Relation_reco {
 //        System.out.println(text);
 
         // 循环处理 relations 列表中的每个元素
+        System.out.println("Neo4J添加关系中...");
         for (String entity : relations) {
-            System.out.println(entity);
             // 按 - 分割字符串
             String[] parts = entity.split("-");
             if (parts.length == 2) {
@@ -159,13 +177,11 @@ public class Entity_Relation_reco {
                 }
             }
         }
-
+        System.out.println("添加完成");
     }
 
     public void buildNeo4j_Relation(String name1,String name2,String relation){
-        System.out.println("Neo4J添加关系中...");
         nodeService.createRelationBetweenNodes(name2,name1,relation);
-        System.out.println("添加完成");
     }
 
 
