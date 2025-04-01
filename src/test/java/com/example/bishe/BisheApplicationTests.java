@@ -1,9 +1,11 @@
 package com.example.bishe;
 
-import com.example.bishe.dao.NodeRepository;
+import com.example.bishe.entity.entity;
+import com.example.bishe.neo4jDAO.NodeRepository;
 import com.example.bishe.entity_reco.Entity_Relation_reco;
 import com.example.bishe.ollama.aiInter;
 import com.example.bishe.service.NodeService;
+import com.example.bishe.userQuestion.UserQuestion;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +20,7 @@ class BisheApplicationTests {
 
     @Autowired
     NodeService nodeService;
+
 
     @Test
     public void testCreate(){
@@ -59,25 +62,28 @@ class BisheApplicationTests {
 
 
         //创建结点及关系测试
-//        System.out.println(nodeService.createEntity("小明"));
-//        System.out.println(nodeService.createEntity("小红"));
-//        System.out.println(nodeService.createEntity("小张"));
-//        System.out.println(nodeService.createEntity("小李"));
-//        nodeService.createRelationBetweenNodes("小红","小张","同事");
-//        nodeService.createRelationBetweenNodes("小红","小李","同事");
-//        nodeService.createRelationBetweenNodes("小红","小明","邻居");
-//        nodeService.createRelationBetweenNodes("小明","小张","邻居");
+//        System.out.println(nodeService.createEntity("小明","测试"));
+//        System.out.println(nodeService.createEntity("小红","测试"));
+//        System.out.println(nodeService.createEntity("小张","测试"));
+//        System.out.println(nodeService.createEntity("小李","测试"));
+//        nodeService.createRelationBetweenNodes("小红","小张","同事","测试");
+//        nodeService.createRelationBetweenNodes("小红","小李","同事","测试");
+//        nodeService.createRelationBetweenNodes("小红","小明","邻居","测试");
+//        nodeService.createRelationBetweenNodes("小明","小张","邻居","测试");
 //
 //        System.out.println(nodeService.findNodeByName("小红"));
 //        System.out.println(nodeService.findNodeByName("小明"));
 //        System.out.println(nodeService.findNodeByName("小张"));
 //        System.out.println(nodeService.findNodeByName("小李"));
 
+        //提取实体关系，构建知识图谱
+//        Entity_Relation_reco entity_Relation_reco = new Entity_Relation_reco("C:\\Users\\24204\\Desktop\\paper word\\temp.pdf","deepseek-r1:7b","测试标题");
+//        System.out.println(entity_Relation_reco.sentences.size());
+//        entity_Relation_reco.main();
 
-        Entity_Relation_reco entity_Relation_reco = new Entity_Relation_reco("C:\\Users\\24204\\Desktop\\paper\\1.pdf","deepseek-r1:1.5b");
-        System.out.println(entity_Relation_reco.sentences.size());
-        entity_Relation_reco.main();
+        UserQuestion userQuestion = new UserQuestion("实体-关系三元组可以使用知识图谱来存储吗？","deepseek-r1:7b");
 
     }
+
 
 }

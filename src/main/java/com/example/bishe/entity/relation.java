@@ -20,6 +20,9 @@ public class relation {
     @TargetNode
     private entity entity;
 
+    @Property(name = "title")
+    private String title;
+
     @Property("relation")
     private String relation;
 

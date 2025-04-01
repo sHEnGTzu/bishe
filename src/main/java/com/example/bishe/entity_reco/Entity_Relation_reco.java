@@ -16,6 +16,7 @@ public class Entity_Relation_reco {
     NodeService nodeService;
     aiInter _aiInter;
     String model;
+    String title;
 
     public String question1_1 = "### 任务说明\n" +
             "你需要从下面给出的重要待提取句子中准确、完整地提取出所有实体。为了帮助你更好地完成任务，我会提供一些示例，你可以学习示例中的思考过程，但最终只需输出提取结果。\n" +
@@ -74,11 +75,12 @@ public class Entity_Relation_reco {
 
 
     //构造方法，从spring容器中获取service实例
-    public Entity_Relation_reco(String Location,String model){
+    public Entity_Relation_reco(String Location,String model,String title){
         this.location = Location;
         nodeService = SpringContextUtil.getBean(NodeService.class);
         _aiInter = new aiInter();
         this.model = model;
+        this.title = title;
         getSentences();
     }
 
@@ -100,7 +102,7 @@ public class Entity_Relation_reco {
     //通过AI得到文本回答
     public void getText(String sentence,int i){
         System.out.println("提取第"+i+"句话中实体："+sentence);
-        String text = _aiInter.tiwen(question1_1+sentence+question1_2,0.4F,model);
+        String text = _aiInter.tiwen(question1_1+sentence+question1_2,0.1F,model);
         getEntity(text,sentence);
     }
 
@@ -133,7 +135,7 @@ public class Entity_Relation_reco {
         Matcher matcher;
         while(true) {
             try {
-                String text = _aiInter.tiwen(question2_1 + sentence + "\n给定实体：" + entities + "\n" + question2_2, 0.3F, model);
+                String text = _aiInter.tiwen(question2_1 + sentence + "\n给定实体：" + entities + "\n" + question2_2, 0.1F, model);
                 String regex = "结果是\\[(.*?)\\]";
                 pattern = Pattern.compile(regex);
                 matcher = pattern.matcher(text);
@@ -180,8 +182,9 @@ public class Entity_Relation_reco {
         System.out.println("添加完成");
     }
 
+    //创建neo4j关系
     public void buildNeo4j_Relation(String name1,String name2,String relation){
-        nodeService.createRelationBetweenNodes(name2,name1,relation);
+        nodeService.createRelationBetweenNodes(name2,name1,relation,title);
     }
 
 

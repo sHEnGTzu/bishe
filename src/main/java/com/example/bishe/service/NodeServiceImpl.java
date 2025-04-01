@@ -1,6 +1,6 @@
 package com.example.bishe.service;
 
-import com.example.bishe.dao.NodeRepository;
+import com.example.bishe.neo4jDAO.NodeRepository;
 import com.example.bishe.entity.entity;
 import com.example.bishe.entity.relation;
 import org.neo4j.driver.internal.InternalNode;
@@ -17,35 +17,38 @@ public class NodeServiceImpl implements NodeService{
     @Autowired
     private NodeRepository NodeRepository;
 
+
+
     //创建结点建立关系或者找到已有结点并建立关系
     @Override
-    public void createRelationBetweenNodes(String nodeName1,String nodeName2,String relation){
+    public void createRelationBetweenNodes(String nodeName1,String nodeName2,String relation,String title){
         //尝试寻找第一个
         entity entity1 = this.findNodeByName(nodeName1);
         //如不存在，则先创建
         if (entity1 == null){
-            entity1 = createEntity(nodeName1);
+            entity1 = createEntity(nodeName1,title);
         }
         //尝试寻找第二个
         entity entity2 = this.findNodeByName(nodeName2);
         //如不存在，则先创建
         if (entity2 == null){
-            entity2 = createEntity(nodeName2);
+            entity2 = createEntity(nodeName2,title);
         }
         //创建关系
-        createRelation(entity1, entity2,relation);
+        createRelation(entity1,entity2,relation,title);
 
     }
 
     //创建结点
     @Override
-    public entity createEntity(String name){
+    public entity createEntity(String name,String title){
         //如果结点已存在，则直接返回
         entity entity = findNodeByName(name);
         if (entity != null) return entity;
 
         entity = new entity();
         entity.setName(name);
+        entity.setTitle(title);
         NodeRepository.save(entity);
         return entity;
     }
@@ -66,14 +69,21 @@ public class NodeServiceImpl implements NodeService{
                 InternalNode entity = (InternalNode) map.get("entity");
                 String _name = String.valueOf(entity.get("name"));
 
+                int start = _name.indexOf("\"") + 1;
+                int end = _name.lastIndexOf("\"");
+                if (start < end) {
+                    _name = _name.substring(start, end);
+                }
 
                 Long id = (Long) map.get("id");
                 entity target = NodeRepository.findFirstByName(_name);
                 String relation = (String) map.get("relation");
+                String title = (String) map.get("title");
 
                 relation1.setId(id);
                 relation1.setEntity(target);
                 relation1.setRelation(relation);
+                relation1.setTitle(title);
 
 
             }
@@ -85,11 +95,10 @@ public class NodeServiceImpl implements NodeService{
 
     //创建关系
     @Override
-    public void createRelation(entity entity1, entity entity2, String relationName) {
-        //旧的添加关系方法
-//        entity1.getRelation().add(relation.builder().entity(entity2).relation(relationName).build());
-//        NodeRepository.save(entity1);
-        NodeRepository.addRelation(entity1.getId(),relationName,entity2.getId());
+    public void createRelation(entity entity1, entity entity2, String relationName, String title) {
+
+        NodeRepository.addRelation(entity1.getId(),relationName,entity2.getId(),title);
+
     }
 
 

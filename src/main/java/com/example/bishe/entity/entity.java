@@ -23,7 +23,10 @@ public class entity implements Serializable {
     @Property(name = "name")
     private String name;
 
-    @Relationship(type = "relation", direction = Relationship.Direction.INCOMING)
+    @Property(name = "title")
+    private String title;
+
+    @Relationship(direction = Relationship.Direction.OUTGOING)
     private List<com.example.bishe.entity.relation> relation;
 
 

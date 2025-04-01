@@ -35,7 +35,7 @@ public class aiInter {
             });
 
             try {
-                return future.get(30, TimeUnit.SECONDS);
+                return future.get(120, TimeUnit.SECONDS);
             } catch (TimeoutException e) {
                 System.out.println("提问超时，第 " + (retryCount + 1) + " 次重试...");
                 future.cancel(true); // 取消任务

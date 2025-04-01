@@ -1,4 +1,4 @@
-package com.example.bishe.dao;
+package com.example.bishe.neo4jDAO;
 
 import com.example.bishe.entity.relation;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
