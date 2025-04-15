@@ -23,6 +23,9 @@ public class entity implements Serializable {
     @Property(name = "name")
     private String name;
 
+    @Property(name = "type")
+    private String type;
+
     @Property(name = "title")
     private String title;
 

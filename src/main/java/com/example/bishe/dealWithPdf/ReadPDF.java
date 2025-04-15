@@ -97,8 +97,8 @@ public class ReadPDF {
         // 常见缩写列表
         List<String> abbreviations = Arrays.asList("Mr", "Ms", "Mrs", "Dr", "Prof", "etc", "vs", "i.e", "e.g", "Eg");
 
-        for (int i = 0; i < parts.length; i++) {
-            String current = parts[i].trim();
+        for (String part : parts) {
+            String current = part.trim();
             if (current.isEmpty()) continue;
 
             if (sentences.isEmpty()) {
@@ -120,13 +120,10 @@ public class ReadPDF {
         }
 
         // 清理空格和换行符
-        for (int i = 0; i < sentences.size(); i++) {
-            String sentence = sentences.get(i)
-                    .replaceAll("[\\r\\n]+", " ")
-                    .replaceAll("\\s+", " ")
-                    .trim();
-            sentences.set(i, sentence);
-        }
+        sentences.replaceAll(s -> s
+                .replaceAll("[\\r\\n]+", " ")
+                .replaceAll("\\s+", " ")
+                .trim());
 
         return sentences;
     }

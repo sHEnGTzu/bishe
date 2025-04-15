@@ -6,6 +6,7 @@ import com.example.bishe.ollama.aiInter;
 import com.example.bishe.service.NodeService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,60 +19,148 @@ public class Entity_Relation_reco {
     String model;
     String title;
 
-    public String question1_1 = "### 任务说明\n" +
-            "你需要从下面给出的重要待提取句子中准确、完整地提取出所有实体。为了帮助你更好地完成任务，我会提供一些示例，你可以学习示例中的思考过程，但最终只需输出提取结果。\n" +
-            "\n" +
-            "### 提示\n" +
-            "在提取实体时，先找出句子中的所有名词，然后根据实际语义判断这些名词是否能独立作为一个有意义的实体。对于一些在句子中仅用于描述其他实体特征或组成部分，且不具备独立语义的名词，可以不作为实体提取。\n" +
-            "\n" +
-            "### 示例\n" +
-            "{\n" +
-            "句子：知识图谱（knowledge graph，KG）通过由实体和关系组成的三元组（头实体，关系，尾实体）来存储大量事实，例如经典的通用知识图谱YAGO（yetanother great ontology）[1]、DBpedia[2]和 Wikidata[3]等。\n" +
-            "思考过程：首先，找出句子中的名词有知识图谱、实体、关系、三元组、头实体、尾实体、事实、通用知识图谱、YAGO、DBpedia、Wikidata。然后分析，头实体和尾实体是用来描述三元组具体组成形式的，它们本身不具有独立于三元组之外的明确语义，所以不算作实体。而知识图谱、实体、关系、三元组、事实、通用知识图谱、YAGO、DBpedia、Wikidata都具有独立的语义和明确的指代，因此可以作为实体。\n" +
-            "结果：结果是[知识图谱，实体，关系，三元组，事实，通用知识图谱，YAGO，DBpedia，Wikidata]\n" +
-            "}\n" +
-            "{\n" +
-            "句子：Moreover, our investigation extends to the potential generalization ability of LLMs for information extraction, leading to the proposition of a Virtual Knowledge Extraction task and the development of the corresponding VINE dataset.\n" +
-            "思考过程：第一步，找出句子里的名词有generalization ability、LLMs、information extraction、Virtual Knowledge Extraction task、corresponding VINE dataset。接着判断，这些名词都具有独立的语义，在句子中分别代表不同的概念或事物，所以都能算作实体。\n" +
-            "结果：结果是[generalization ability，LLMs，information extraction，Virtual Knowledge Extraction task，corresponding VINE dataset]\n" +
-            "}\n" +
-            "\n" +
-            "### 重要的待提取的句子\n";
+    public String question1_1 = "【待提取实体的句子】\n";
 
-    public String question1_2 = "\n"+"\n"+"### 回答格式\n" +
-            "请严格按照“结果是[实体1，实体2，......]”的格式输出提取结果。不要用json格式返回。";
-
-    public String question2_1 = "### 任务说明\n" +
-            "你要基于给定的段落，全面且不遗漏地找出待定实体列表里各实体相互之间可能存在的关系。需注意，关系的描述格式为前面实体对于后面实体的关系。\n" +
+    public String question1_2 = "\n\n【待提取实体的句子】\n" +
             "\n" +
-            "### 提示\n" +
-            "在识别实体关系时，按以下步骤操作：\n" +
-            "1. 精准定位每个实体在句子中的位置。\n" +
-            "2. 针对该位置所在的句子，仔细分析判断其中其他实体与该实体是否存在关系。\n" +
-            "3. 若在该句子内未发现关系，可尝试以该句子为中心，逐步扩大范围（如上下相邻句子等，本任务仅围绕给定的这一个句子）来寻找潜在关系。\n" +
-            "4. 关系类型可能多样，包括但不限于组成、来源、使用、关联、目的等，要充分考虑句子语义来确定合适的关系表述。\n" +
             "\n" +
-            "### 示例\n" +
-            "{\n" +
-            "句子：知识图谱（knowledge graph，KG）通过由实体和关系组成的三元组（头实体，关系，尾实体）来存储大量事实。\n" +
-            "给定实体：[知识图谱，实体，关系，三元组，事实]\n" +
-            "思考过程：首先，分别定位各实体在句子中的位置。对于“知识图谱”，在其所在句子里，分析其他实体与它的关系，发现它由“实体”和“关系”组成，并且它是“三元组”的集合形式；对于“三元组”，可知它用来“存储”“事实”，同时它由“实体”和“关系”组成。\n" +
-            "结果：结果是[实体-知识图谱：组成，关系-知识图谱：组成，三元组-事实：存储，三元组-实体：组成，三元组-关系：组成]\n" +
-            "}\n" +
-            "{\n" +
-            "句子：Moreover, our investigation extends to the potential generalization ability of LLMs for information extraction.\n" +
-            "给定实体：[generalization ability，LLMs，information extraction]\n" +
-            "思考过程：第一步，明确每个实体在句子中的位置。接着，依据句子语义判断实体间关系，发现“generalization ability”是“LLMs”所具有的一种能力，即“属于”关系；“LLMs”在句子中是用于“information extraction”这一活动的。\n" +
-            "结果：结果是[generalization ability-LLMs：属于，LLMs-information extraction：用于]\n" +
-            "}\n" +
+            "【实体类型定义】\n" +
+            "Task | 应用目标、待解决的科研问题、需构建的系统\n" +
+            "示例：图像分割、机器阅读理解系统、蛋白质结构预测\n" +
             "\n" +
-            "### 重要的待提取的句子及实体\n" +
-            "句子：";
+            "Method | 具体技术方案、工具、算法、框架、系统组件\n" +
+            "示例：BERT、CoreNLP工具包、词性标注模块、随机森林算法\n" +
+            "\n" +
+            "Evaluation Metric | 量化评估指标或抽象质量属性\n" +
+            "示例：F1值、时间复杂度、鲁棒性、ROC曲线\n" +
+            "\n" +
+            "Material | 数据集、知识库、实验材料\n" +
+            "示例：CoNLL-2003数据集、ImageNet图像库、维基百科语料\n" +
+            "\n" +
+            "Other Scientific Terms | 领域专业术语（不属于上述四类）\n" +
+            "示例：几何约束、句法规则、语义树、噪声过滤\n" +
+            "\n" +
+            "Generic | 通用词汇或代词（信息性弱）\n" +
+            "示例：模型、方法、它们、该算法\n" +
+            "\n" +
+            "【提取规则优化】\n" +
+            "分类细化：\n" +
+            "Method vs Material：工具/框架属于 Method，其使用的数据资源属于 Material\n" +
+            "正确示例：\n" +
+            "CoreNLP工具包:Method（工具） vs 宾夕法尼亚树库:Material（数据集）\n" +
+            "\n" +
+            "Metric 扩展：包含抽象质量属性（如鲁棒性:Evaluation Metric）\n" +
+            "\n" +
+            "Generic 严格化：仅当无法关联具体实体时使用（如模型:Generic）\n" +
+            "\n" +
+            "优先级调整：\n" +
+            "若名词短语同时符合多类，按 Task > Method > Evaluation Metric > Material > Other Scientific Terms > Generic 选择\n" +
+            "\n" +
+            "格式一致性：\n" +
+            "与关系抽取对齐，保留原文大小写和符号\n" +
+            "实体与实体间使用中文逗号分隔,实体和关系的冒号用英文冒号，如\"实体1:关系，实体2:关系\"\n" +
+            "错误示例：[F1-score:Metric] ❌（类型名必须完整）\n" +
+            "正确示例：[F1-score:Evaluation Metric] ✅\n" +
+            "\n" +
+            "【示例】\n" +
+            "示例1（区分 Method/Material）\n" +
+            "输入：\n" +
+            "\"使用 CoreNLP 工具处理宾夕法尼亚树库中的句法树。\"\n" +
+            "输出：\n" +
+            "结果是[CoreNLP:Method，宾夕法尼亚树库:Material，句法树:Other Scientific Terms]\n" +
+            "\n" +
+            "示例2（Metric 扩展）\n" +
+            "输入：\n" +
+            "\"对比模型的鲁棒性和时间复杂度，结果优于基线 2%。\"\n" +
+            "输出：\n" +
+            "结果是[鲁棒性:Evaluation Metric，时间复杂度:Evaluation Metric，基线:Generic]\n" +
+            "\n" +
+            "示例3（Generic 严格过滤）\n" +
+            "输入：\n" +
+            "\"该方法整合了多种模型，它们均通过并行计算加速。\"\n" +
+            "输出：\n" +
+            "结果是[该方法:Generic，模型:Generic，并行计算:Other Scientific Terms]\n" +
+            "\n" +
+            "【禁止行为强化】\n" +
+            "禁止过度泛化：\n" +
+            "如 深度学习:Generic ❌ → 应归类为 Other Scientific Terms ✅\n" +
+            "\n" +
+            "禁止工具与数据混淆：\n" +
+            "PyTorch框架:Method ✅ vs CIFAR-10数据集:Material ✅\n" +
+            "\n" +
+            "禁止拆分短语：\n" +
+            "错误示例：[机器:Generic, 翻译:Generic] ❌\n" +
+            "正确示例：[机器翻译:Task] ✅\n" +
+            "\n" +
+            "【最终输出格式】\n" +
+            "结果是[实体:类型，实体:类型，...]";
 
-    public String question2_2 = "\n" +
-            "### 回答格式\n" +
-            "请严格依照“结果是[实体1-实体2：关系，实体3-实体4：关系，......]”的固定格式输出提取结果，不要用json格式返回。";
 
+
+    public String question2_1 = "【给定句子及实体】\n";
+
+    public String question2_2 = "\n\n【关系类型及定义】\n" +
+            "关系类型\t方向\t定义与模式\n" +
+            "Used-for\tA → B\tB 用于实现/支撑/优化 A（如方法用于任务，数据用于训练）\n" +
+            "Feature-of\tB → A\tB 是 A 的特征/属性（如技术特征属于模型）\n" +
+            "Hyponym-of\tB → A\tB 是 A 的子类/实例（如具体模型是某框架的实现）\n" +
+            "Part-of\tB → A\tB 是 A 的组成部分（如模块属于系统）\n" +
+            "Compare\tA ↔ B\tA 与 B 被直接比较或对立（对称关系）\n" +
+            "Conjunction\tA ↔ B\tA 与 B 并列使用或协同作用（对称关系）\n" +
+            "【抽取规则】\n" +
+            "优先级：\n" +
+            "优先抽取明确的关系（如动词/介词提示），其次依赖领域常识\n" +
+            "若实体间存在多关系，按优先级 Used-for > Part-of > Hyponym-of > Feature-of > Compare/Conjunction 选择\n" +
+            "\n" +
+            "方向性：\n" +
+            "非对称关系（如 Used-for）需区分方向，格式为 A->B：关系类型\n" +
+            "对称关系（如 Compare）用 A->B：关系类型 表示双向关系\n" +
+            "\n" +
+            "格式要求：\n" +
+            "实体必须与之前提取的实体完全一致（保留大小写/符号）\n" +
+            "多个关系用中文逗号分隔，使用的冒号为中文冒号\n" +
+            "错误示例：BERT-based NER system:Used-for:Task ❌\n" +
+            "正确示例：BERT-based NER system->image segmentation：Used-for ✅\n" +
+            "\n" +
+            "【示例】\n" +
+            "示例1\n" +
+            "输入：\n" +
+            "给定句子：\"The BERT-based NER system achieves 92% F1 on CoNLL-2003.\"\n" +
+            "给定实体：[BERT-based NER system:Method, F1:Metric, CoNLL-2003:Material]\n" +
+            "关系输出：\n" +
+            "结果是[BERT-based NER system->image segmentation：Used-for，CoNLL-2003->BERT-based NER system：Used-for]\n" +
+            "\n" +
+            "示例2\n" +
+            "输入：\n" +
+            "给定句子：\"物理约束和几何先验知识提升分割精度。\"\n" +
+            "给定实体：[物理约束:OtherScientificTerm, 几何先验知识:OtherScientificTerm, 分割精度:Metric]\n" +
+            "关系输出：\n" +
+            "结果是[物理约束->几何先验知识：Conjunction，物理约束->分割精度：Feature-of，几何先验知识->分割精度：Feature-of]\n" +
+            "\n" +
+            "示例3\n" +
+            "输入：\n" +
+            "给定句子：\"与基于规则的模型不同，神经网络方法显著提高了鲁棒性。\"\n" +
+            "给定实体：[基于规则的模型:Method, 神经网络方法:Method, 鲁棒性:Metric]\n" +
+            "关系输出：\n" +
+            "结果是[基于规则的模型->神经网络方法：Compare，神经网络方法->鲁棒性：Used-for]\n" +
+            "\n" +
+            "示例4\n" +
+            "输入：\n" +
+            "给定句子：\"自然语言处理模块包含词性标注和依存句法分析两个组件。\"\n" +
+            "给定实体：[自然语言处理模块:Method, 词性标注:Method, 依存句法分析:Method]\n" +
+            "关系输出：\n" +
+            "结果是[词性标注->自然语言处理模块：Part-of，依存句法分析->自然语言处理模块：Part-of]\n" +
+            "\n" +
+            "【禁止行为】\n" +
+            "不添加未在原文中明确出现的关系\n" +
+            "不修改实体名称（如缩写展开、大小写转换）\n" +
+            "不确定关系方向时，优先选择 Conjunction 或 Compare\n" +
+            "禁止合并多个关系（如 A->B，Used-for & Part-of ❌）\n" +
+            "\n" +
+            "【输出格式】\n" +
+            "结果是[实体A->后实体B：关系，前实体C->后实体D：关系...]";
+
+    int option;
 
 
     //构造方法，从spring容器中获取service实例
@@ -81,8 +170,19 @@ public class Entity_Relation_reco {
         _aiInter = new aiInter();
         this.model = model;
         this.title = title;
+        option = 0;
         getSentences();
     }
+
+    public Entity_Relation_reco(String Location,String title){
+        this.location = Location;
+        nodeService = SpringContextUtil.getBean(NodeService.class);
+        _aiInter = new aiInter();
+        this.title = title;
+        option = 1;
+        getSentences();
+    }
+
 
     public void main(){
         int n = sentences.size();
@@ -102,30 +202,43 @@ public class Entity_Relation_reco {
     //通过AI得到文本回答
     public void getText(String sentence,int i){
         System.out.println("提取第"+i+"句话中实体："+sentence);
-        String text = _aiInter.tiwen(question1_1+sentence+question1_2,0.1F,model);
+        String text;
+        if (option == 0) text = _aiInter.tiwen(sentence+question1_1,0.1F,model);
+        else text = _aiInter.tiwen(question1_1+sentence+question1_2);
         getEntity(text,sentence);
     }
 
     //从文本回答中提取实体
-    public void getEntity(String text,String sentence){
+    public void getEntity(String text, String sentence) {
         // 定义正则表达式，用于匹配结果是后面方括号里的内容
         String regex = "结果是\\[(.*?)\\]";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(text);
 
         List<String> entities = new ArrayList<>();
+        List<String> types = new ArrayList<>();
+
         if (matcher.find()) {
             // 获取方括号内的内容
             String entityString = matcher.group(1);
             // 按逗号分割内容
-            String[] entityArray = entityString.split("，");
-            for (String entity : entityArray) {
-                entities.add(entity.trim());
+            String[] entityTypePairs = entityString.split("，");
+            for (String pair : entityTypePairs) {
+                // 按冒号分割实体和类型
+                String[] parts = pair.split(":");
+                if (parts.length == 2) {
+                    entities.add(parts[0].trim());
+                    types.add(parts[1].trim());
+                }
             }
         }
         System.out.println("提取完成");
-        System.out.println("实体为："+ entities);
-        getRelation(entities.toString(),sentence);
+        System.out.println("实体为：" + entities);
+        System.out.println("类型为：" + types);
+        System.out.println("添加实体中...");
+        for (int i=0;i< entities.size();i++) nodeService.createEntity(entities.get(i),types.get(i),title);
+        // 假设这里的 getRelation 方法接收实体列表和句子作为参数
+        getRelation(entities.toString(), sentence);
     }
 
 
@@ -135,7 +248,9 @@ public class Entity_Relation_reco {
         Matcher matcher;
         while(true) {
             try {
-                String text = _aiInter.tiwen(question2_1 + sentence + "\n给定实体：" + entities + "\n" + question2_2, 0.1F, model);
+                String text;
+                if (option == 0) text = _aiInter.tiwen(question2_1+"给定句子："+sentence+"\n给定实体："+entities+question2_2, 0.1F, model);
+                else text = _aiInter.tiwen(question2_1+"给定句子："+sentence+"\n给定实体："+entities+question2_2);
                 String regex = "结果是\\[(.*?)\\]";
                 pattern = Pattern.compile(regex);
                 matcher = pattern.matcher(text);
@@ -165,8 +280,8 @@ public class Entity_Relation_reco {
         // 循环处理 relations 列表中的每个元素
         System.out.println("Neo4J添加关系中...");
         for (String entity : relations) {
-            // 按 - 分割字符串
-            String[] parts = entity.split("-");
+            // 按 -> 分割字符串
+            String[] parts = entity.split("->");
             if (parts.length == 2) {
                 name1 = parts[0];
                 // 再按 ：分割第二部分
@@ -179,12 +294,12 @@ public class Entity_Relation_reco {
                 }
             }
         }
-        System.out.println("添加完成");
+        System.out.println("添加完成\n");
     }
 
     //创建neo4j关系
     public void buildNeo4j_Relation(String name1,String name2,String relation){
-        nodeService.createRelationBetweenNodes(name2,name1,relation,title);
+        nodeService.createRelationBetweenNodes(name1,name2,relation,title);
     }
 
 

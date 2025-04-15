@@ -53,6 +53,21 @@ public class NodeServiceImpl implements NodeService{
         return entity;
     }
 
+    //创建带有类型的结点
+    @Override
+    public entity createEntity(String name,String type,String title){
+        //如果结点已存在，则直接返回
+        entity entity = findNodeByName(name);
+        if (entity != null) return entity;
+
+        entity = new entity();
+        entity.setName(name);
+        entity.setType(type);
+        entity.setTitle(title);
+        NodeRepository.save(entity);
+        return entity;
+    }
+
     //查找结点
     @Override
     public entity findNodeByName(String name) {

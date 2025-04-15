@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 
 
 @SpringBootTest
@@ -23,7 +24,7 @@ class BisheApplicationTests {
 
 
     @Test
-    public void testCreate(){
+    public void testCreate() throws IOException {
 //        Optional<person> byId = personRepository.findById(3L);
 //        byId.orElse(null);
 //
@@ -77,11 +78,11 @@ class BisheApplicationTests {
 //        System.out.println(nodeService.findNodeByName("小李"));
 
         //提取实体关系，构建知识图谱
-//        Entity_Relation_reco entity_Relation_reco = new Entity_Relation_reco("C:\\Users\\24204\\Desktop\\paper word\\temp.pdf","deepseek-r1:7b","测试标题");
-//        System.out.println(entity_Relation_reco.sentences.size());
+        Entity_Relation_reco entity_Relation_reco = new Entity_Relation_reco("C:\\Users\\24204\\Desktop\\paper\\1.pdf","测试标题");
+        System.out.println(entity_Relation_reco.sentences.size());
+//        System.out.println(entity_Relation_reco.question2_1+"句子:\n"+"实体:"+entity_Relation_reco.question1_2);
+        entity_Relation_reco.main();
 //        entity_Relation_reco.main();
-
-        UserQuestion userQuestion = new UserQuestion("实体-关系三元组可以使用知识图谱来存储吗？","deepseek-r1:7b");
 
     }
 

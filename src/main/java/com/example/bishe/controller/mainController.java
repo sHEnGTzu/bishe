@@ -15,7 +15,7 @@ public class mainController {
 
     @PostMapping("/question")
     public Response question(@RequestBody Map<String,String> map){
-        userQuestion = new UserQuestion(map.get("message"),"deepseek-r1:7b");
+        userQuestion = new UserQuestion(map.get("message"),"deepseek-r1:1.5b");
         return new Response(userQuestion.main());
     }
 

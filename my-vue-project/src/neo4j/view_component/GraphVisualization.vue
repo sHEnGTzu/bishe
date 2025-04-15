@@ -2,18 +2,23 @@
   <div>
     <!-- 指标显示框 -->
     <div class="indicator-box">
-      <p>节点数量: {{ nodeCount }}</p>
+      统计<p>节点数量: {{ nodeCount }}</p>
       <p>边的数量: {{ edgeCount }}</p>
       <p>平均度: {{ averageDegree }}</p>
       <p>聚类系数: {{ clusteringCoefficient }}</p>
     </div>
     <div id="network"></div>
+    <!-- 边名柱状图 -->
+    <canvas id="edgeChart"></canvas>
+    <!-- 节点名柱状图 -->
+    <canvas id="nodeChart"></canvas>
   </div>
 </template>
 
 <script>
-import { executeQuery } from '@/neo4j/connection/neo4jService.js';
-import { Network } from 'vis-network/standalone/esm/vis-network';
+import {executeQuery} from '@/neo4j/connection/neo4jService.js';
+import {Network} from 'vis-network/standalone/esm/vis-network';
+import Chart from 'chart.js/auto';
 
 export default {
   name: 'GraphVisualization',
@@ -23,7 +28,9 @@ export default {
       nodeCount: 0,
       edgeCount: 0,
       averageDegree: 0,
-      clusteringCoefficient: 0
+      clusteringCoefficient: 0,
+      edgeNameCounts: {},
+      nodeTypeCounts: {} // 修改为 nodeTypeCounts 用于统计 type 属性
     };
   },
   async mounted() {
@@ -44,12 +51,14 @@ export default {
         nodes.push({
           id: sourceNode.identity.low,
           label: sourceNode.properties.name || sourceNode.labels[0],
+          type: sourceNode.properties.type // 保存 type 属性
         });
       }
       if (!nodes.some((node) => node.id === targetNode.identity.low)) {
         nodes.push({
           id: targetNode.identity.low,
           label: targetNode.properties.name || targetNode.labels[0],
+          type: targetNode.properties.type // 保存 type 属性
         });
       }
 
@@ -85,6 +94,27 @@ export default {
     const possibleTriangles = this.nodeCount * (this.nodeCount - 1) * (this.nodeCount - 2) / 6;
     this.clusteringCoefficient = possibleTriangles > 0 ? triangleCount / possibleTriangles : 0;
 
+    // 统计边名
+    this.edgeNameCounts = {};
+    edges.forEach(edge => {
+      if (this.edgeNameCounts[edge.label]) {
+        this.edgeNameCounts[edge.label]++;
+      } else {
+        this.edgeNameCounts[edge.label] = 1;
+      }
+    });
+
+    // 统计节点 type 属性
+    this.nodeTypeCounts = {};
+    nodes.forEach(node => {
+      const nodeType = node.type || 'Other Scientific Terms'; // 如果 type 属性不存在，使用 'Unknown'
+      if (this.nodeTypeCounts[nodeType]) {
+        this.nodeTypeCounts[nodeType]++;
+      } else {
+        this.nodeTypeCounts[nodeType] = 1;
+      }
+    });
+
     // 创建 vis-network 实例
     const container = document.getElementById('network');
     const data = {
@@ -93,6 +123,52 @@ export default {
     };
     const options = {};
     this.network = new Network(container, data, options);
+
+    // 绘制边名柱状图
+    const edgeChartCtx = document.getElementById('edgeChart').getContext('2d');
+    new Chart(edgeChartCtx, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(this.edgeNameCounts),
+        datasets: [{
+          label: '边类型统计',
+          data: Object.values(this.edgeNameCounts),
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // 绘制节点 type 统计柱状图
+    const nodeChartCtx = document.getElementById('nodeChart').getContext('2d');
+    new Chart(nodeChartCtx, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(this.nodeTypeCounts),
+        datasets: [{
+          label: '结点类型统计',
+          data: Object.values(this.nodeTypeCounts),
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
   },
   beforeUnmount() {
     if (this.network) {
@@ -115,4 +191,8 @@ export default {
   width: 100%;
   height: 600px;
 }
-</style>，
+
+canvas {
+  margin-top: 20px;
+}
+</style>

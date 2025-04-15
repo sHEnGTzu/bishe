@@ -12,6 +12,9 @@ public interface NodeService {
     //创建实体
     entity createEntity(String name,String title);
 
+    //创建带有类型的结点
+    entity createEntity(String name,String type,String title);
+
     //查找结点
     entity findNodeByName(String name);
 

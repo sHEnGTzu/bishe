@@ -1,22 +1,31 @@
 package com.example.bishe.ollama;
 
+import java.io.IOException;
 import java.util.concurrent.*;
+import okhttp3.*;
 import org.springframework.ai.chat.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.ollama.OllamaChatClient;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaOptions;
+import org.springframework.web.client.RestClient;
+
+import static com.example.bishe.ollama.DeepSeekChatRemote.makeApiCall;
 
 public class aiInter {
     // 手动创建 OllamaChatClient 实例,不依赖自动注入
-    private final OllamaChatClient ollamaChatClient;
+    OllamaChatClient ollamaChatClient;
+
 
     public aiInter() {
+        //本地模型
         String ollamaBaseUrl = "http://localhost:11434";
-        // 创建 OllamaApi 实例
+
         OllamaApi ollamaApi = new OllamaApi(ollamaBaseUrl);
         this.ollamaChatClient = new OllamaChatClient(ollamaApi);
     }
+
+
 
     public String tiwen(String msg, float temperature, String model) {
         int retryCount = 0;
@@ -49,4 +58,18 @@ public class aiInter {
         }
         return null;
     }
+
+    public String tiwen(String msg){
+        String apiKey = "sk-8a85efbf334346acadaa906a86f28af8";
+        String baseUrl = "https://api.deepseek.com/v1/chat/completions";
+
+        try {
+            String responseContent = makeApiCall(apiKey, baseUrl,msg);
+            return responseContent;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
