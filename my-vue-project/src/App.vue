@@ -8,7 +8,8 @@ import router from './router/index.js';
 
 onMounted(() => {
   // 初始跳转到登录页面
-  router.push('/literature');
+  router.push('/login');
+
 });
 </script>
 

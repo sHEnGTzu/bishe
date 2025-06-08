@@ -1,19 +1,26 @@
 <template>
-  <LiteratureDetail/>
-  <div className="container">
-    <div className="left">
-      <ChatBox/>
-    </div>
-    <div className="right">
-      <GraphVisualization/>
-    </div>
-  </div>
+
+  <el-container>
+    <el-row>
+      <el-col :span="5">
+        <LiteratureDetail/>
+      </el-col>
+      <el-col :span="9">
+        <ChatBox/>
+      </el-col>
+      <el-col :span="10">
+        <GraphVisualization/>
+      </el-col>
+    </el-row>
+  </el-container>
+
 </template>
 
 <script setup>
 import LiteratureDetail from '../components/LiteratureDetail.vue';
 import GraphVisualization from '../neo4j/view_component/GraphVisualization.vue';
 import ChatBox from './ChatBox.vue';
+
 </script>
 
 <style scoped>

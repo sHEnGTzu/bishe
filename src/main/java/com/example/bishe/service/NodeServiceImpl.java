@@ -3,11 +3,18 @@ package com.example.bishe.service;
 import com.example.bishe.neo4jDAO.NodeRepository;
 import com.example.bishe.entity.entity;
 import com.example.bishe.entity.relation;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
 import org.neo4j.driver.internal.InternalNode;
 import org.neo4j.driver.internal.value.MapValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Value;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +24,8 @@ public class NodeServiceImpl implements NodeService{
     @Autowired
     private NodeRepository NodeRepository;
 
-
+    @Autowired
+    private Driver neo4jDriver;
 
     //创建结点建立关系或者找到已有结点并建立关系
     @Override
@@ -115,6 +123,35 @@ public class NodeServiceImpl implements NodeService{
         NodeRepository.addRelation(entity1.getId(),relationName,entity2.getId(),title);
 
     }
+
+    @Override
+    public List<Map<String, String>> getAllTriples(String papername) {
+        List<Map<String, String>> triples = new ArrayList<>();
+
+        String cypher = """
+        MATCH (a)-[r]->(b)
+        WHERE a.title = $papername AND b.title = $papername
+        RETURN a.name AS start, type(r) AS relation, b.name AS end
+    """;
+
+        try (Session session = neo4jDriver.session()) {
+            session.readTransaction(tx -> {
+                Result result = tx.run(cypher, Map.of("papername", papername));
+                while (result.hasNext()) {
+                    Record record = result.next();
+                    Map<String, String> triple = new HashMap<>();
+                    triple.put("start", record.get("start").asString());
+                    triple.put("relation", record.get("relation").asString());
+                    triple.put("end", record.get("end").asString());
+                    triples.add(triple);
+                }
+                return null;
+            });
+        }
+
+        return triples;
+    }
+
 
 
 }

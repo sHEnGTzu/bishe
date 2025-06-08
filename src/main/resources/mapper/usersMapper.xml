@@ -2,17 +2,17 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.bishe.mysql.mapper.usersMapper">
+<mapper namespace="com.example.bishe.SqlMapper.usersMapper">
 
 
-    <select id="findByName" resultType="com.example.bishe.mysql.sqlEntity.User">
+    <select id="findByName" resultType="com.example.bishe.entity.User">
         SELECT * FROM users
         WHERE name = #{name}
     </select>
 
     <insert id="addUser">
-        INSERT INTO users(name,password)
-        VALUES (#{name},#{password})
+        INSERT INTO users(name,password,email)
+        VALUES (#{name},#{password},#{email})
     </insert>
 
 

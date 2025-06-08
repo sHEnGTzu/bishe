@@ -2,18 +2,19 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.bishe.mysql.mapper.papersMapper">
+
+<mapper namespace="com.example.bishe.SqlMapper.papersMapper">
 
 
 
     <insert id="addPaper">
-        INSERT INTO papers(user_name,paper_name)
-        VALUES (#{user_name},#{paper_name})
+        INSERT INTO papers(user_name,paper_name,author,subject,keywords,DOI,Journal)
+        VALUES (#{user_name},#{paper_name},#{author},#{subject},#{keywords},#{DOI},#{Journal})
     </insert>
 
-    <select id="findByUsername" resultType="com.example.bishe.mysql.sqlEntity.Paper">
+    <select id="findByUsername" resultType="com.example.bishe.entity.Paper">
         SELECT * FROM papers
-        WHERE user_name = #{username}
+        WHERE user_name = #{user_name}
     </select>
 
 

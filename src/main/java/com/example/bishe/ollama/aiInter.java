@@ -64,8 +64,7 @@ public class aiInter {
         String baseUrl = "https://api.deepseek.com/v1/chat/completions";
 
         try {
-            String responseContent = makeApiCall(apiKey, baseUrl,msg);
-            return responseContent;
+            return makeApiCall(apiKey, baseUrl,msg);
         } catch (IOException e) {
             e.printStackTrace();
         }

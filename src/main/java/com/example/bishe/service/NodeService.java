@@ -2,6 +2,9 @@ package com.example.bishe.service;
 
 import com.example.bishe.entity.entity;
 
+import java.util.List;
+import java.util.Map;
+
 public interface NodeService {
 
 
@@ -23,4 +26,5 @@ public interface NodeService {
     void createRelation(entity entity1, entity entity2, String relationName,String title);
 
 
+    List<Map<String, String>> getAllTriples(String papername);
 }
